@@ -75,10 +75,14 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'generalads.ctm76wcjzokd.us-east-2.rds.amazonaws.com',
+	/*'hostname' => 'generalads.ctm76wcjzokd.us-east-2.rds.amazonaws.com',
 	'username' => 'bonAngeLOL',
 	'password' => 'Minesciaslapasvorto2',
-	'database' => 'adserver',
+	'database' => 'adserver',*/
+	'hostname' => getenv("mysqlserverads"),
+	'username' => getenv("mysqluserads"),
+	'password' => getenv("mysqladspass"),
+	'database' => getenv("mysqldbads"),
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
