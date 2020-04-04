@@ -45,4 +45,23 @@ class userManagement extends CI_Controller{
         echo json_encode($UserData);
         return true;
     }
+    public function deleteUser($id){
+        if($this->input->method()!="delete"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $confirm = $this->users->deleteUser(["id_user"=>$id]);
+        if($confirm==0){
+            echo json_encode(["error"=>"Invalid ID"]);
+            $this->output->set_status_header(400);
+            return false;
+        }
+        echo json_encode(["message"=>"User has been deleted","id"=>$id]);
+        return true;
+    }
 }

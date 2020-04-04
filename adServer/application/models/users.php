@@ -12,4 +12,8 @@ class users extends CI_Model{
 			$return = $this->db->insert_id();
 		return $return;
     }
-} 
+    public function deleteUser($data){
+    	$this->db->delete("users",$data);
+    	return $this->db->affected_rows();
+    }
+}
