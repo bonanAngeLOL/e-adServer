@@ -29,4 +29,26 @@ class positions extends CI_Model{
     	var_dump($return);
     	return $return;
     }
+
+    public function getPositionAds($position=0,$active=1){
+        $this->db->select("'image' as type, a.id_ad, i.alt, i.src, i.link, a.endDate, a.height, a.width");
+        $this->db->from("image i");
+        $this->db->join("ads a","i.ad = a.id_ad");
+        $this->db->join("adsinposition ap","a.id_ad = ap.ad");
+        $this->db->where("ap.position",$position);
+        $this->db->where("a.active",$active);
+        $this->db->where("a.startDate <= current_timestamp()");
+        $this->db->where("(a.endDate > current_timestamp() OR a.endDate is null)");
+        $images = $this->db->get()->result();
+        $this->db->select("'code' as type, a.id_ad, c.code, a.endDate, a.height, a.width");
+        $this->db->from("code c");
+        $this->db->join("ads a","c.ad = a.id_ad");
+        $this->db->join("adsinposition ap","a.id_ad = ap.ad");
+        $this->db->where("ap.position",$position);
+        $this->db->where("a.active",$active);
+        $this->db->where("a.startDate <= current_timestamp()");
+        $this->db->where("(a.endDate > current_timestamp() OR a.endDate is null)");
+        $codes = $this->db->get()->result();
+        return array_merge((array)$images,(array)$codes);
+    }
 }

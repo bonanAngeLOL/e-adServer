@@ -1,0 +1,69 @@
+import javax.imageio.ImageIO;
+
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+
+import net.sourceforge.barbecue.BarcodeFactory;   
+import net.sourceforge.barbecue.Barcode;   
+import net.sourceforge.barbecue.BarcodeException;   
+import net.sourceforge.barbecue.output.OutputException;   
+
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.awt.*;   
+import java.io.*;   
+import java.awt.Font;
+import java.io.IOException; 
+
+public class Main {
+	public static void main(String[] args) throws BarcodeException, OutputException, IOException {
+		String textCode;
+		Barcode barcode;
+        BufferedImage image = new BufferedImage(4960, 7016, BufferedImage.TYPE_BYTE_GRAY);   
+        Graphics2D g = (Graphics2D) image.getGraphics();
+        g.setPaint(new Color(255,255,255));
+        g.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+        int margin = 250;
+        RenderedImage rendImage;
+        PDDocument document = new PDDocument();
+        int limit = 5000;
+        int pageNumber = 0;
+        for(int i=1;i<=limit;i++) {
+        	System.out.println(i);
+        	textCode = "DL1000"+Integer.toString(i);
+            barcode = BarcodeFactory.createCode128B(textCode);
+            barcode.setBarHeight(600);    
+            barcode.setBarWidth(15);
+            barcode.setLabel(textCode);
+            barcode.setFont(new Font("TimesRoman", Font.PLAIN, 120));
+            barcode.draw(g, margin, (800*((i-1)%8))+150);
+            if(i%8==0) {
+            	margin += 2200;
+            }
+            if(i%16==0||i==limit) {
+            	rendImage = image;
+            	File file = new File("filep.png");
+                ImageIO.write(rendImage, "png", file);
+                document.addPage(new PDPage());
+                PDPage my_page = document.getPage(pageNumber);
+                PDImageXObject pdImage = PDImageXObject.createFromFile("filep.png", document);
+                
+                PDPageContentStream contentStream = new PDPageContentStream(document, my_page);
+                
+                contentStream.drawImage(pdImage, 5, 2, 600, 750);
+                margin = 250;
+                contentStream.close();
+                g = (Graphics2D) image.getGraphics();
+                g.setPaint(new Color(255,255,255));
+                g.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+                file.delete();
+                pageNumber++;
+            }
+        }
+        document.save("x.pdf");
+        document.close();
+	}
+}

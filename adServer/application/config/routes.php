@@ -54,6 +54,7 @@ $route['websiteManagement/delete/(:num)'] = 'websiteManagement/delete/$1';
 $route['userManagement/deleteUser/(:num)'] = 'userManagement/deleteUser/$1';
 $route['positionsManagement/delete/(:num)'] = 'positionsManagement/delete/$1';
 $route['positionsManagement/list/(:num)'] = 'positionsManagement/list/$1/$2/$3';
+$route['position/resource/(:num)'] = 'position/resource/$1';
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
