@@ -24,10 +24,14 @@ function createElement(element,parent){
     return nElement;
 } 
 function iterateElement(element,parent){
-    children = element.childNodes;
-    for(let child of children){
+   	children = element.childNodes;
+     /*for(let child of children){
         var nParent = createElement(child,parent);
         iterateElement(child,nParent);
+    }*/
+    for(var i=0, len = element.childElementCount ; i < len; ++i){
+    	var nParent = createElement(element.children[i],parent);
+    	iterateElement(element.children[i],nParent);
     }
 }
 function setImg(image,element){
