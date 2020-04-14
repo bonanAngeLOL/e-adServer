@@ -31,9 +31,19 @@ function iterateElement(element,parent){
     }
 }
 function setImg(image,element){
-	var nW = image.width;
-	var nH = image.height;
-	var content = '<img src="/images/'+image.src+'" style="width:'+(nW??'auto') +' !important; max-width:100%; height:'+(nH??'auto')+'; !important" alt="'+(image.alt??'')+'">';
+	var nW = 'auto';
+	var nH = 'auto';
+	var alt = "";
+	if(image.width!==undefined){
+		nW = image.width;
+	}
+	if(image.height!==undefined){
+		nH = image.height;
+	}
+	if(image.alt!==undefined){
+		nH = image.alt;
+	}
+	var content = '<img src="/images/'+image.src+'" style="width:'+nW+' !important; max-width:100%; height:'+nH+'; !important" alt="'+image.alt+'">';
 	if(image.link)
 		content = '<a href="'+image.link+'" target="_blank" >'+content+'</a>';
 	element.innerHTML = content;
