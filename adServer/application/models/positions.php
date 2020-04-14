@@ -26,7 +26,7 @@ class positions extends CI_Model{
     		$this->db->where("websites.name",$website);
     	}
     	$return = $this->db->get()->result();
-    	var_dump($return);
+    	//var_dump($return);
     	return $return;
     }
 
