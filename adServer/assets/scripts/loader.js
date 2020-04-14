@@ -29,10 +29,10 @@ function iterateElement(element,parent){
         var nParent = createElement(child,parent);
         iterateElement(child,nParent);
     }*/
-    for(var i=0, len = element.childElementCount ; i < len; ++i){
-    	var nParent = createElement(element.children[i],parent);
-    	iterateElement(element.children[i],nParent);
-    }
+	for(var i = 0; i<children.length; i++){
+		var nParent = createElement(children[i],parent);
+		iterateElement(children[i],nParent);
+	}
 }
 function setImg(image,element){
 	var nW = 'auto';
