@@ -1,7 +1,6 @@
 /*
 	Ads loader main JS file
 	by bonAngeLOL
-
 */
 (function (){
 let adElement = document.getElementById("ad-container");
@@ -34,7 +33,7 @@ function iterateElement(element,parent){
 function setImg(image,element){
 	var nW = image.width;
 	var nH = image.height;
-	var content = '<img src="http://127.0.0.1:8081/adserver/project/adServer/images/'+image.src+'" style="width:'+(nW??'auto') +' !important; max-width:100%; height:'+(nH??'auto')+'; !important" alt="'+(image.alt??'')+'">';
+	var content = '<img src="/images/'+image.src+'" style="width:'+(nW??'auto') +' !important; max-width:100%; height:'+(nH??'auto')+'; !important" alt="'+(image.alt??'')+'">';
 	if(image.link)
 		content = '<a href="'+image.link+'" target="_blank" >'+content+'</a>';
 	element.innerHTML = content;

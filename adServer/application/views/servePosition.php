@@ -14,6 +14,6 @@
 	<body>
 		<div id="ad-container">
 		</div>
-		<script async defer type="text/javascript" src="http://127.0.0.1:8081/adserver/project/assets/scripts/loader.js"></script>
+		<script async defer type="text/javascript" src="/assets/scripts/loader.js"></script>
 	</body>
 </html>
