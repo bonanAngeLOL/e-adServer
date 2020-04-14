@@ -1,6 +1,6 @@
 <?php
 defined("BASEPATH") or exit ("No direct access allowed");
-class websites extends CI_Model{
+class Websites extends CI_Model{
 	public function __construct(){
 		$this->db->db_debug = FALSE;
 	}
