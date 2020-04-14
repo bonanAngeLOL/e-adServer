@@ -25,14 +25,10 @@ function createElement(element,parent){
 } 
 function iterateElement(element,parent){
    	children = element.childNodes;
-     /*for(let child of children){
+    for(let child of children){
         var nParent = createElement(child,parent);
         iterateElement(child,nParent);
-    }*/
-	for(var i = 0; i<children.length; i++){
-		var nParent = createElement(children[i],parent);
-		iterateElement(children[i],nParent);
-	}
+    }
 }
 function setImg(image,element){
 	var nW = 'auto';
