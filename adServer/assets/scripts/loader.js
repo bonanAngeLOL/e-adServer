@@ -3,7 +3,7 @@
 	by bonAngeLOL
 */
 (function (){
-let adElement = document.getElementById("ad-container");
+var adElement = document.getElementById("ad-container");
 function createElement(element,parent){
     var tag = element.tagName;
     var nElement = document.createElement(tag);
