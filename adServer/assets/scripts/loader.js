@@ -83,15 +83,13 @@ ads = JSON.parse(document.querySelector("noscript#data").innerText);
 setAd(ads);
 })();
 function sendPostMessage(){
-	if (height !== document.getElementById('ad-container').offsetHeight) {
-		height = document.getElementById('ad-container').offsetHeight;
-		window.parent.postMessage(
-			{
-				frameHeight: height
-			}, 
-			'*'
-		);
-		console.log(height);
-	}
+	height = document.getElementById('ad-container').offsetHeight;
+	window.parent.postMessage(
+		{
+			frameHeight: height
+		}, 
+		'*'
+	);
+	console.log(height);
 }
 window.onresize = () => sendPostMessage();
