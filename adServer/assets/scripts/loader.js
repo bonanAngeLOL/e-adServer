@@ -23,11 +23,22 @@ function createElement(element,parent){
     parent.appendChild(nElement);
     return nElement;
 } 
+/*
+This options is not currently supported by most of old browsers, and it maight never be a polyfill
 function iterateElement(element,parent){
-   	children = element.childNodes;
-    for(let child of children){
-        var nParent = createElement(child,parent);
-        iterateElement(child,nParent);
+	children = element.childNodes;
+	for(let child of children){
+	    var nParent = createElement(child,parent);
+	    iterateElement(child,nParent);
+	}
+}
+*/
+function iterateElement(element,parent){
+    if(element===undefined)
+    {return false;}
+    for(var i=0 ; i<element.childNodes.length ; i++){
+        var nParent = createElement(element.childNodes[i],parent);
+        iterateElement(element.childNodes[i],nParent);
     }
 }
 function setImg(image,element){
