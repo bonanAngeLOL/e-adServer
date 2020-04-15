@@ -2,18 +2,6 @@
 	Ads loader main JS file
 	by bonAngeLOL
 */
-function sendPostMessage(){
-	if (height !== document.getElementById('ad-container').offsetHeight) {
-		height = document.getElementById('ad-container').offsetHeight;
-		window.parent.postMessage(
-			{
-				frameHeight: height
-			}, 
-			'*'
-		);
-		console.log(height);
-	}
-}
 (function (){
 var adElement = document.getElementById("ad-container");
 function createElement(element,parent){
@@ -66,7 +54,7 @@ function setImg(image,element){
 	if(image.alt!==undefined){
 		nH = image.alt;
 	}
-	var content = '<img src="/images/'+image.src+'" style="width:'+nW+' !important; max-width:100%; height:'+nH+'; !important" alt="'+image.alt+'">';
+	var content = '<img src="/images/'+image.src+'" style="width:'+nW+' !important; max-width:100%; height:'+nH+'; !important" alt="'+image.alt+'" onload="sendPostMessage()">';
 	if(image.link)
 		content = '<a href="'+image.link+'" target="_blank" >'+content+'</a>';
 	element.innerHTML = content;
@@ -94,6 +82,16 @@ function setAd(ad){
 ads = JSON.parse(document.querySelector("noscript#data").innerText);
 setAd(ads);
 })();
-
-window.onload = () => sendPostMessage();
+function sendPostMessage(){
+	if (height !== document.getElementById('ad-container').offsetHeight) {
+		height = document.getElementById('ad-container').offsetHeight;
+		window.parent.postMessage(
+			{
+				frameHeight: height
+			}, 
+			'*'
+		);
+		console.log(height);
+	}
+}
 window.onresize = () => sendPostMessage();
