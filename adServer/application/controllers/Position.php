@@ -36,7 +36,10 @@ class Position extends CI_Controller{
             echo $cached;
             return true;
         }
-        $result = [ "data" => json_encode($this->positions->getPositionAds($position,1))];
+        $result = [
+                    "data" => json_encode($this->positions->getPositionAds($position,1)),
+                    "id" => $position
+                ];
         $view = $this->load->view("servePosition", $result, true);
 
         $this->memcached->mem()->set($key,$view,0,86400);

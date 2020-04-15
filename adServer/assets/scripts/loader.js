@@ -86,7 +86,8 @@ function sendPostMessage(){
 	height = document.getElementById('ad-container').offsetHeight;
 	window.parent.postMessage(
 		{
-			frameHeight: height
+			frameHeight: height,
+			id: id
 		}, 
 		'*'
 	);

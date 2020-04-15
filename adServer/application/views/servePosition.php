@@ -10,6 +10,7 @@
 		<noscript id="data">
 			<?=$data?>
 		</noscript>
+		<script>var id=<?=$id?>;</script>
 	</head>
 	<body>
 		<div id="ad-container">
