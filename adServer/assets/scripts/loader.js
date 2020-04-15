@@ -2,6 +2,18 @@
 	Ads loader main JS file
 	by bonAngeLOL
 */
+function sendPostMessage(){
+	if (height !== document.getElementById('ad-container').offsetHeight) {
+		height = document.getElementById('ad-container').offsetHeight;
+		window.parent.postMessage(
+			{
+				frameHeight: height
+			}, 
+			'*'
+		);
+		console.log(height);
+	}
+}
 (function (){
 var adElement = document.getElementById("ad-container");
 function createElement(element,parent){
@@ -82,3 +94,6 @@ function setAd(ad){
 ads = JSON.parse(document.querySelector("noscript#data").innerText);
 setAd(ads);
 })();
+
+window.onload = () => sendPostMessage();
+window.onresize = () => sendPostMessage();
