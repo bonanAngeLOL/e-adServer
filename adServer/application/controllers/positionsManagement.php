@@ -1,6 +1,6 @@
 <?php
 defined("BASEPATH") or exit ("No direct access allowed");
-class positionsManagement extends CI_Controller{
+class PositionsManagement extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));
