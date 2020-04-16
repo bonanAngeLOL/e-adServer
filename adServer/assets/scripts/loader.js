@@ -49,7 +49,18 @@ function waitAdSense(){
 	    }, 250);
 }
 function waitCode(){
-	var wait = 
+	/*var wait = setInterval(
+		function(){
+	        try{
+	            if(adsbygoogle.loaded==true){
+            		clearInterval(wait);
+        			sendPostMessage();
+	            }
+	        }
+	        catch(e){
+	            
+	        }
+	    }, 250);*/
 }
 /*
 This options is not currently supported by most of old browsers, and it maight never be a polyfill
