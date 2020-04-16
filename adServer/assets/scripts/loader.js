@@ -84,16 +84,16 @@ function setImg(image,element){
 	var nW = 'auto';
 	var nH = 'auto';
 	var alt = "";
-	if(image.width!==undefined){
+	if(image.width!==undefined||image.width!==null){
 		nW = image.width;
 	}
-	if(image.height!==undefined){
+	if(image.height!==undefined||image.height!==null){
 		nH = image.height;
 	}
-	if(image.alt!==undefined){
+	if(image.alt!==undefined||image.alt!==null){
 		nH = image.alt;
 	}
-	var content = '<img src="/images/'+image.src+'" style="width:'+nW+' !important; max-width:100%; height:'+nH+'; !important" alt="'+image.alt+'" onload="sendPostMessage()">';
+	var content = '<img src="/images/'+image.src+'" style="width:'+nW+' !important; max-width:100%; height:'+nH+' !important;" alt="'+image.alt+'" onload="sendPostMessage()">';
 	if(image.link)
 		content = '<a href="'+image.link+'" target="_blank" >'+content+'</a>';
 	element.innerHTML = content;
