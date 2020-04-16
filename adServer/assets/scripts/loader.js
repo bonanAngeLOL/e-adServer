@@ -93,4 +93,4 @@ function sendPostMessage(){
 	);
 	console.log(height);
 }
-window.onresize = () => sendPostMessage();
+window.onresize = sendPostMessage();
