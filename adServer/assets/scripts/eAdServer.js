@@ -36,5 +36,5 @@
 	}
 
 	var elements = document.querySelectorAll("ins.e-ad");
-	iterateElement(xxx)
+	iterateElement(elements)
 })()
