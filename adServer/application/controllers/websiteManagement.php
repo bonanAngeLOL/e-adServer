@@ -54,7 +54,7 @@ class WebsiteManagement extends CI_Controller{
         echo json_encode(["message"=>"Website has been deleted","id"=>$id]);
         return true;
 	}
-	public function list($pos=0,$quant=1000){
+	public function toList($pos=0,$quant=1000){
         if($this->input->method()!="get"){
             $this->output->set_status_header(405);
             return false;

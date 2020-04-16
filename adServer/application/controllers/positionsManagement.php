@@ -60,7 +60,7 @@ class PositionsManagement extends CI_Controller{
         echo json_encode(["message"=>"Position has been deleted","id"=>$id]);
         return true;
     }
-    public function list($website,$pos=0,$quant=1000){
+    public function toList($website,$pos=0,$quant=1000){
     	echo json_encode($this->positions->listPerWebsite($website,$pos,$quant));
     	return true;
     }
