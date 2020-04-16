@@ -4,6 +4,17 @@
 */
 (function (){
 var adElement = document.getElementById("ad-container");
+function sendPostMessage(){
+	height = document.getElementById('ad-container').offsetHeight;
+	window.parent.postMessage(
+		{
+			frameHeight: height,
+			id: id
+		}, 
+		'*'
+	);
+	console.log(height);
+}
 function createElement(element,parent){
     var tag = element.tagName;
     var nElement = document.createElement(tag);
@@ -22,7 +33,24 @@ function createElement(element,parent){
     }
     parent.appendChild(nElement);
     return nElement;
-} 
+}
+function waitAdSense(){
+	var wait = setInterval(
+		function(){
+	        try{
+	            if(adsbygoogle.loaded==true){
+            		clearInterval(wait);
+        			sendPostMessage();
+	            }
+	        }
+	        catch(e){
+	            
+	        }
+	    }, 250);
+}
+function waitCode(){
+	var wait = 
+}
 /*
 This options is not currently supported by most of old browsers, and it maight never be a polyfill
 function iterateElement(element,parent){
@@ -63,6 +91,9 @@ function setCode(code,element){
 	var realCode = atob(code.code);
 	var doc = (new DOMParser()).parseFromString(realCode, 'text/html');
 	iterateElement(doc.querySelector("html"),adElement);
+	if(code.code.indexOf("adsbygoogle")>=0){
+		waitAdSense();
+	}
 }
 function setAd(ad){
 	objInf = Object.keys(ad);
