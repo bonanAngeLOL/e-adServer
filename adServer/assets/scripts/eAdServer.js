@@ -4,6 +4,7 @@
 	accesible via [ins.e-ad] CSS selector with a "valid data-position" attribute
 */
 (function(){
+	iframeList = [];
 	function iterateElement(elements){
 	    if(elements===undefined||elements.length==0)
 	    {return false;}
@@ -11,6 +12,7 @@
 	        elId = elements[i].getAttribute("data-position");
 	        console.log(elements[i]);
 	        var niframe = document.createElement("iframe");
+		//niframe.setAttribute("data-position");
 	        niframe.src = "https://ad.e-consulta.com/position/serve/"+elements[i].getAttribute("data-position");
 	        niframe.width = "100%";
 	        niframe.tabIndex = 0;
@@ -20,20 +22,42 @@
 	        niframe.style.overflow = "hidden";
 	        niframe.style.userSelect = "none";
 	        niframe.allowTranparency = true;
-		function messageCatch(Ev,eId){
+		/*function messageCatch(Ev,eId){
 	            console.log("eId",elId);
 	            console.log("Ev.data.id",Ev.data.id);
 	            if(eId!=Ev.data.id){
 	                return false;
 	            }
-	            niframe.style.height = Ev.data.frameHeight+"px";
+	            document.querySelector('ins.e-ad[data-position="'+eId+'"] > iframe').style.height = Ev.data.frameHeight+"px";
+		    console.log("setting to",document.querySelector('ins.e-ad[data-position="'+eId+'"] > iframe'));
+		    console.log("height",Ev.data.frameHeight);
 		}
 	        window.addEventListener("message",function(Ev){
-				messageCatch(Ev,elId)
-	        });
+			console.log("creating a listener for ");
+				messageCatch(Ev,elId);
+	        });*/
 	        elements[i].appendChild(niframe);
+		niframe = null;
 	    }
 	}
+	
+
+	function messageCatch(Ev){
+                    //console.log("eId",elId);
+                    //console.log("Ev.data.id",Ev.data.id);
+                    //if(eId!=Ev.data.id){
+                    //    return false;
+                    //}
+	    try{
+		document.querySelector('ins.e-ad[data-position="'+Ev.data.id+'"] > iframe').style.height = Ev.data.frameHeight+"px";
+	    }
+	    catch(e){
+	    }
+        }
+        window.addEventListener("message",function(Ev){
+        	messageCatch(Ev);
+        });
+
 
 	var elements = document.querySelectorAll("ins.e-ad");
 	iterateElement(elements)
