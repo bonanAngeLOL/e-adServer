@@ -16,4 +16,10 @@ class Users extends CI_Model{
     	$this->db->delete("users",$data);
     	return $this->db->affected_rows();
     }
+    public function userLogin($username){
+    	$this->db->select("first_name, last_name, email, username, password, unix_timestamp(now()) as iat, unix_timestamp(DATE_ADD(now(), INTERVAL 10 DAY)) as exp");
+		$this->db->from("users");
+		$this->db->where("username",$username);
+		return $this->db->get()->result();
+    }
 }

@@ -4,7 +4,7 @@ class UserManagement extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));
-        $this->load->library('form_validation');
+        $this->load->library(array('form_validation','jwtload'));
         $this->load->model(array('users'));
         $this->load->library('encryption');
 	}
@@ -31,7 +31,7 @@ class UserManagement extends CI_Controller{
 			"last_name"  => $this->input->post("last_name"),
 			"username"   => $this->input->post("username"),
 			"email"      => $this->input->post("email"),
-			"password"	 => $this->input->post("password")
+			"password"	 => password_hash($this->input->post("password"), PASSWORD_BCRYPT)
 		);
         //var_dump($UserData);
 		$newUser = $this->users->newUser($UserData);
