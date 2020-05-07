@@ -7,6 +7,22 @@ class AdsManagement extends CI_Controller{
         $this->load->library(array('form_validation','memcached'));
         $this->load->model(array('ads'));
 	}
+
+    public function imgInfo($id){
+        if($this->input->method()!="get"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $ad = $this->ads->imgInfo($id)[0] ?? '{}';
+        echo json_encode( (Object) $ad );
+        return true;
+    }
+
 	public function addCode(){
     	if($this->input->method()!="post"){
     		$this->output->set_status_header(405);
@@ -109,7 +125,12 @@ class AdsManagement extends CI_Controller{
     	if($this->input->post("active")!=""){
     		$ad["active"] = $this->input->post("active");
     	}
-
+        if($this->input->post("height")!=""){
+            $ad["height"] = $this->input->post("height");
+        }
+        if($this->input->post("width")!=""){
+            $ad["width"] = $this->input->post("width");
+        }
 
     	$image = [
     		"src"	=> $imgSrc
@@ -125,15 +146,58 @@ class AdsManagement extends CI_Controller{
 
     	$newImage = $this->ads->addImage($ad,$image);
 
-		if(is_string($newImage)&strpos($newImage,"Duplicate")!==false){
-            echo json_encode(array("error"=>$newImage));
-            $this->output->set_status_header(400);
-            return false;
+		if(is_string($newImage)){
+            if(strpos($newImage,"Duplicate")!==false){
+                echo json_encode(array("error"=>$newImage));
+                $this->output->set_status_header(400);
+                return false;
+            }
         }
 
         echo json_encode($newImage);
         return true;
 	}
+
+    private function getParentPos($id){
+        return $this->ads->getParentPosition($id);
+    }
+
+    private function resetPMem($positions){
+        //$positions = $this->ads->getParentPosition($id);
+        //var_dump($positions);
+        foreach ($positions as $position) {
+            //var_dump($position);
+            $key = base64_encode("/position/resource/".$position->id_position);
+            $this->memcached->mem()->delete($key);
+            header('X-memCres: '.$key);
+            $key = base64_encode("/position/serve/".$position->id_position);
+            $this->memcached->mem()->delete($key);
+            header('X-memCserve: '.$key);
+        }
+    }
+
+    public function delete($id){
+        if($this->input->method()!="delete"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $parent = $this->getParentPos($id);
+        $confirm = $this->ads->delete(["id_ad"=>$id]);
+        if($confirm==0){
+            echo json_encode(["error"=>"Invalid ID"]);
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $this->resetPMem($parent);
+        echo json_encode((Object)["message"=>"Position has been deleted","id"=>$id]);
+        return true;
+    }
+
 	public function attach(){
     	if($this->input->method()!="post"){
     		$this->output->set_status_header(405);
@@ -153,14 +217,28 @@ class AdsManagement extends CI_Controller{
 
     	$newAttachement = $this->ads->attach($data);
 
-		if(is_string($newAttachement)&strpos($newAttachement,"Duplicate")!==false){
-            echo json_encode(array("error"=>$newAttachement));
-            $this->output->set_status_header(400);
-            return false;
+		if(is_string($newAttachement)){
+            if(strpos($newAttachement,"Duplicate")!==false){
+                echo json_encode(array("error"=>$newAttachement));
+                $this->output->set_status_header(400);
+                return false;
+            }
         }
         $key = base64_encode("/position/resource/".$this->input->post("position"));
         $this->memcached->mem()->delete($key);
+        header('X-memCres: '.$key);
+        $key = base64_encode("/position/serve/".$this->input->post("position"));
+        $this->memcached->mem()->delete($key);
+        header('X-memCserve: '.$key);
     	echo json_encode($newAttachement);
         return true;
 	}
+
+    public function update(){
+        if($this->input->method()!="post"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        echo '-';
+    }
 } 

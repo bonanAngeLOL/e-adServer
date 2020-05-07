@@ -64,4 +64,17 @@ class PositionsManagement extends CI_Controller{
     	echo json_encode($this->positions->listPerWebsite($website,$pos,$quant));
     	return true;
     }
+    public function inSection($section){
+        if($this->input->method()!="get"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($section)){
+            echo json_encode((Object)["error"=>"Invalid section identifier"]);
+            $this->output->set_status_header(400);
+            return false;
+        }
+        echo json_encode($this->positions->listPerSection($section));
+        return true;
+    }
 }
