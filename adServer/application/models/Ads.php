@@ -36,6 +36,17 @@ class Ads extends CI_Model{
 		return array_merge($ad,$image);
 	}
 
+	public function updateImage($adInfo, $imageInfo, $id){
+		$r = ['ad'=>'','image'=>''];
+		$this->db->where('id_ad',$id);
+		$r["ad"] = $this->db->update('ads',$adInfo);
+		if(count($imageInfo)){
+			$this->db->where('ad',$id);
+			$r["image"] = $this->db->update('image',$imageInfo);
+		}
+		return $r;
+	}
+
 	public function imgInfo($id){
 		$this->db->select("a.name, a.startDate, a.endDate, a.active, a.height, a.width,
     i.alt, i.src, i.ad, i.link");

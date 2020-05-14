@@ -64,7 +64,7 @@ class WebsiteManagement extends CI_Controller{
 			$this->output->set_status_header(400);
 			return false;
 		}
-		echo json_encode($this->websites->list($pos,$quant));
+		echo json_encode($this->websites->Tolist($pos,$quant));
 	}
 	public function search(){
         if($this->input->method()!="get"){

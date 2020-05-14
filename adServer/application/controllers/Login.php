@@ -26,7 +26,11 @@ class Login extends CI_Controller{
     		$this->output->set_status_header(400);
     		return false;
     	}
-    	$userInfo = $this->users->userLogin($this->input->post("username")) ?? [];
+    	//$userInfo = $this->users->userLogin($this->input->post("username")) ?? [];
+    	$userInfo = array();
+    	if($this->input->post("username")){
+    		$userInfo = $this->users->userLogin($this->input->post("username"));
+    	}
     	if(
     		count($userInfo)==0 || 
 			!password_verify($this->input->post("password"),$userInfo[0]->password)

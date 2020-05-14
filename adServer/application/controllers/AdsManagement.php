@@ -18,7 +18,8 @@ class AdsManagement extends CI_Controller{
             $this->output->set_status_header(400);
             return false;
         }
-        $ad = $this->ads->imgInfo($id)[0] ?? '{}';
+        $ad = '{}';
+        $ad = $this->ads->imgInfo($id)[0];
         echo json_encode( (Object) $ad );
         return true;
     }
@@ -234,11 +235,84 @@ class AdsManagement extends CI_Controller{
         return true;
 	}
 
-    public function update(){
+    public function updateImg(){
         if($this->input->method()!="post"){
             $this->output->set_status_header(405);
             return false;
         }
-        echo '-';
+        $imgSrc = false;
+        if(count($_FILES)>0){
+            $config['upload_path']          = './images/';
+            $config['allowed_types']        = 'gif|jpg|png|jpeg';
+            $config['max_size']             = 500;
+            $config['max_width']            = 10000;
+            $config['max_height']           = 10000;
+
+            $this->load->library('upload', $config);
+
+            if ( ! $this->upload->do_upload('src'))
+            {
+                echo json_encode(array('error' => $this->upload->display_errors()));
+                $this->output->set_status_header(400);
+                return false;
+            }
+            $imgSrc = $this->upload->data("file_name");
+        }
+        $this->form_validation->set_rules('id','ID','trim|required');
+        $this->form_validation->set_rules('name', 'Name', 'trim|required');
+        $this->form_validation->set_rules('startDate', 'Start date', 'trim|required');
+        $this->form_validation->set_rules('endDate', 'End date', 'trim');
+        $this->form_validation->set_rules('link','Link','trim');
+        $this->form_validation->set_rules('alt', 'alt', 'trim');
+        $this->form_validation->set_rules('active', 'active', 'trim');
+        $this->form_validation->set_rules('width', 'width', 'trim');
+        $this->form_validation->set_rules('height', 'height', 'trim');
+
+        if(!$this->form_validation->run()){
+            echo json_encode($this->form_validation->error_array());
+            $this->output->set_status_header(400);
+            return false;
+        }
+
+        $ad = [
+            "name"      => $this->input->post("name"),
+            "startDate" => $this->input->post("startDate")
+            //"endDate" => $this->input->post("endDate") ?? null
+        ];
+
+        $endDate = $this->input->post("endDate");
+        $active = $this->input->post("active");
+        $height = $this->input->post("height");
+        $width = $this->input->post("width");
+        $ad["endDate"] = $endDate == 'null' || $endDate == '0000-00-00T00:00:00' || $endDate == '' || $endDate == 'undefined' ? null : $endDate;
+        $ad["active"] = $active == 1 || $active == '1' ? 1 : 0;
+        $ad["height"] = $height == '' || $height == 'null' || $height == 'undefined' ? null : $height;
+        $ad["width"] = $width == '' || $width == 'null' || $width == 'undefined' ? null : $width;
+
+        $alt = $this->input->post("alt");
+        $link = $this->input->post("link");
+
+        $image = [];
+        $image["alt"] = $alt == '' || $alt == 'null' || $alt == 'undefined' ? null : $alt;
+        if($imgSrc){
+            $image["src"] = $imgSrc;
+        }
+        $image["link"] = $link == '' || $link == 'null' || $link == 'undefined' ? null : $link;
+
+        $updated = $this->ads->updateImage($ad,$image,$this->input->post("id"));
+
+/*        if(is_string($newImage)){
+            if(strpos($newImage,"Duplicate")!==false){
+                echo json_encode(array("error"=>$newImage));
+                $this->output->set_status_header(400);
+                return false;
+            }
+        }
+*/
+        $parent = $this->getParentPos($this->input->post("id"));
+        $this->resetPMem($parent);
+        echo json_encode((Object)$updated);
+        return true;
+
     }
 } 

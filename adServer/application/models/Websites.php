@@ -15,7 +15,7 @@ class Websites extends CI_Model{
 		$this->db->delete("websites",$data);
 		return $this->db->affected_rows();
 	}
-	public function list($pos=0, $quant=1000){
+	public function Tolist($pos=0, $quant=1000){
 		//return $this->db->get("websites",$quant, $pos)->result();
 		$this->db->select('id_website as id, name, active');
 		$this->db->limit($quant, $pos);
