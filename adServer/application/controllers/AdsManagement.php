@@ -6,6 +6,7 @@ class AdsManagement extends CI_Controller{
 		$this->load->helper(array('form', 'url'));
         $this->load->library(array('form_validation','memcached'));
         $this->load->model(array('ads'));
+        error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 	}
 
     public function imgInfo($id){

@@ -110,6 +110,11 @@ function setAd(ad){
 	objInf = Object.keys(ad);
 	randomN = Math.floor(Math.random()*objInf.length);
 	elected = ad[objInf[randomN]];
+	if(typeof x.an == "undefined"){
+		document.getElementById('ad-container').style.height = '0px';
+		sendPostMessage();
+		return false;
+	}
 	if(elected.type=="image"){
 		setImg(elected,adElement);
 		return true;

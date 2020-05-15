@@ -22,6 +22,7 @@
 	        niframe.style.overflow = "hidden";
 	        niframe.style.userSelect = "none";
 	        niframe.allowTranparency = true;
+	        niframe.style.display = 'none';
 		/*function messageCatch(Ev,eId){
 	            console.log("eId",elId);
 	            console.log("Ev.data.id",Ev.data.id);
@@ -49,7 +50,9 @@
                     //    return false;
                     //}
 	    try{
-		document.querySelector('ins.e-ad[data-position="'+Ev.data.id+'"] > iframe').style.height = Ev.data.frameHeight+"px";
+	    	if(Ev.data.frameHeight==0||Ev.data.frameHeight==null||Ev.data.frameHeight=='')
+    			return false;
+			document.querySelector('ins.e-ad[data-position="'+Ev.data.id+'"] > iframe').style.height = Ev.data.frameHeight+"px";
 	    }
 	    catch(e){
 	    }
