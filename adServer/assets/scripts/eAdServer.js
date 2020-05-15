@@ -53,6 +53,7 @@
 	    	if(Ev.data.frameHeight==0||Ev.data.frameHeight==null||Ev.data.frameHeight=='')
     			return false;
 			document.querySelector('ins.e-ad[data-position="'+Ev.data.id+'"] > iframe').style.height = Ev.data.frameHeight+"px";
+			document.querySelector('ins.e-ad[data-position="'+Ev.data.id+'"] > iframe').style.display = 'block';
 	    }
 	    catch(e){
 	    }
