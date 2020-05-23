@@ -78,6 +78,44 @@ class AdsManagement extends CI_Controller{
         return true;
 	}
 
+    private function compressJPEG($path){
+        $iMagick = new Imagick($path);
+        $iMagick->setImageCompression(Imagick::COMPRESSION_JPEG);
+        $iMagick->setImageCompressionQuality(85);
+        $iMagick->stripImage();
+        $iMagick->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+        $iMagick->gaussianBlurImage(0.05, 0);
+        //$imagick->setImageFormat('jpg');
+        return $iMagick->writeImage($path);
+    }
+
+    private function compressPNG($path){
+        $iMagick = new Imagick($path);
+        $iMagick->setImageCompression(19);
+        $iMagick->stripImage();
+        //$imagick->setImageFormat('png');
+        $iMagick->setImageCompressionQuality(90);
+        return $iMagick->writeImage($path);
+    }
+
+    private function compressGIF($path){
+        return true;
+    }
+
+    private function compress($path){
+        $image = pathinfo($path);
+        if($image["extension"]=="jpeg"||$image["extension"]=="jpg"){
+            return $this->compressJPEG(FCPATH."/images/".$path);
+        }
+        elseif($image["extension"]=="png"){
+            return $this->compressPNG(FCPATH."/images/".$path);
+        }
+        elseif($image["extension"]=="gif"){
+            return $this->compressGIF(FCPATH."/images/".$path);
+        }
+        return false;
+    }
+
 	public function addImage(){
     	if($this->input->method()!="post"){
     		$this->output->set_status_header(405);
@@ -98,6 +136,9 @@ class AdsManagement extends CI_Controller{
         	$this->output->set_status_header(400);
         	return false;
         }
+
+        $compress = $this->compress($this->upload->data("file_name"));
+        header('X-compressed: '.$compress);
 
         $imgSrc = $this->upload->data("file_name");
 
@@ -257,6 +298,8 @@ class AdsManagement extends CI_Controller{
                 $this->output->set_status_header(400);
                 return false;
             }
+            $compress = $this->compress($this->upload->data("file_name"));
+            header('X-compressed: '.$compress);
             $imgSrc = $this->upload->data("file_name");
         }
         $this->form_validation->set_rules('id','ID','trim|required');
