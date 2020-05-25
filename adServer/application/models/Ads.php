@@ -36,6 +36,17 @@ class Ads extends CI_Model{
 		return array_merge($ad,$image);
 	}
 
+	public function updateCode($adInfo, $codeInfo, $id){
+		$r = ['ad'=>'','code'=>''];
+		$this->db->where('id_ad',$id);
+		$r["ad"] = $this->db->update('ads',$adInfo);
+		if(count($codeInfo)){
+			$this->db->where('ad',$id);
+			$r["code"] = $this->db->update('code',$codeInfo);
+		}
+		return $r;
+	}
+
 	public function updateImage($adInfo, $imageInfo, $id){
 		$r = ['ad'=>'','image'=>''];
 		$this->db->where('id_ad',$id);
@@ -52,6 +63,14 @@ class Ads extends CI_Model{
     i.alt, i.src, i.ad, i.link");
 		$this->db->from("ads a");
 		$this->db->join("image i","a.id_ad = i.ad");
+		$this->db->where("a.id_ad", $id);
+		return $this->db->get()->result();
+	} 
+
+	public function codeInfo($id){
+		$this->db->select("a.id_ad as ad, a.name, a.startDate, a.endDate, a.active, a.height, a.width, c.code");
+		$this->db->from("ads a");
+		$this->db->join("code c","a.id_ad = c.ad");
 		$this->db->where("a.id_ad", $id);
 		return $this->db->get()->result();
 	} 

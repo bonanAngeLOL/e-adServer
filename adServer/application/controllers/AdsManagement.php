@@ -25,6 +25,22 @@ class AdsManagement extends CI_Controller{
         return true;
     }
 
+    public function codeInfo($id){
+        if($this->input->method()!="get"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $ad = '{}';
+        $ad = $this->ads->codeInfo($id)[0];
+        echo json_encode( (Object) $ad );
+        return true;
+    }
+
 	public function addCode(){
     	if($this->input->method()!="post"){
     		$this->output->set_status_header(405);
@@ -86,7 +102,7 @@ class AdsManagement extends CI_Controller{
 
         $config['upload_path']          = './images/';
         $config['allowed_types']        = 'gif|jpg|png|jpeg';
-        $config['max_size']             = 500;
+        $config['max_size']             = 2048;
         $config['max_width']            = 10000;
         $config['max_height']           = 10000;
 
@@ -236,6 +252,47 @@ class AdsManagement extends CI_Controller{
         return true;
 	}
 
+    public function updateCode(){
+        if($this->input->method()!="post"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+
+        $this->form_validation->set_rules('id','ID','trim|required');
+        $this->form_validation->set_rules('name', 'Name', 'trim|required');
+        $this->form_validation->set_rules('startDate', 'Start date', 'trim|required');
+        $this->form_validation->set_rules('endDate', 'End date', 'trim');
+        $this->form_validation->set_rules('active', 'active', 'trim');
+        $this->form_validation->set_rules('code', 'code', 'trim');
+
+        if(!$this->form_validation->run()){
+            echo json_encode($this->form_validation->error_array());
+            $this->output->set_status_header(400);
+            return false;
+        }
+
+        $ad = [
+            "name"      => $this->input->post("name"),
+            "startDate" => $this->input->post("startDate")
+            //"endDate" => $this->input->post("endDate") ?? null
+        ];
+
+        $endDate = $this->input->post("endDate");
+        $active = $this->input->post("active");
+        $ad["endDate"] = $endDate == 'null' || $endDate == '0000-00-00T00:00:00' || $endDate == '' || $endDate == 'undefined' ? null : $endDate;
+        $ad["active"] = $active == 1 || $active == '1' ? 1 : 0;
+
+        $code['code'] = $this->input->post("code");
+
+        $updated = $this->ads->updateCode($ad,$code,$this->input->post("id"));
+
+        $parent = $this->getParentPos($this->input->post("id"));
+        $this->resetPMem($parent);
+        echo json_encode((Object)$updated);
+        return true;
+
+    }
+
     public function updateImg(){
         if($this->input->method()!="post"){
             $this->output->set_status_header(405);
@@ -245,7 +302,7 @@ class AdsManagement extends CI_Controller{
         if(count($_FILES)>0){
             $config['upload_path']          = './images/';
             $config['allowed_types']        = 'gif|jpg|png|jpeg';
-            $config['max_size']             = 500;
+            $config['max_size']             = 2048;
             $config['max_width']            = 10000;
             $config['max_height']           = 10000;
 

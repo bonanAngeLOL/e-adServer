@@ -30,6 +30,13 @@ class Positions extends CI_Model{
     	return $return;
     }
 
+    public function getFeedImages($id){
+        $this->db->select("src, alt, url, width, height");
+        $this->db->from("feedimg");
+        $this->db->where("feed",$id);
+        return $this->db->get()->result();
+    }
+
     public function getPositionAds($position=0,$active=1,$future=false){
         $this->db->select("'image' as type, a.id_ad as id, i.alt, i.src, i.link, a.startDate, a.endDate, a.height, a.width, a.active, a.name");
         $this->db->from("image i");
@@ -42,6 +49,7 @@ class Positions extends CI_Model{
         }
         $this->db->where("(a.endDate > current_timestamp() OR a.endDate is null)");
         $images = $this->db->get()->result();
+
         $this->db->select("'code' as type, a.id_ad as id, c.code, a.startDate, a.endDate, a.height, a.width, a.active, a.name");
         $this->db->from("code c");
         $this->db->join("ads a","c.ad = a.id_ad");
@@ -53,7 +61,29 @@ class Positions extends CI_Model{
         }
         $this->db->where("(a.endDate > current_timestamp() OR a.endDate is null)");
         $codes = $this->db->get()->result();
-        return array_merge((array)$images,(array)$codes);
+
+
+        $this->db->select("'feed' as type, a.id_ad as id, f.direction, a.startDate, a.endDate, a.height, a.width, a.active, a.name, f.id_feed as feed");
+        $this->db->from("feed f");
+        $this->db->join("ads a","f.ad = a.id_ad");
+        $this->db->join("adsinposition ap","a.id_ad = ap.ad");
+        $this->db->where("ap.position",$position);
+        $this->db->where("a.active",$active);
+        if(!$future){
+            $this->db->where("a.startDate <= current_timestamp()");
+        }
+        $this->db->where("(a.endDate > current_timestamp() OR a.endDate is null)");
+        $feed = $this->db->get()->result();
+
+        foreach($feed as $k=>$val){
+            //var_dump($val);
+            $feed[$k]->{"imageList"} = $this->getFeedImages($val->feed);
+            //echo '<br><br>';
+        }
+
+        //var_dump($feed);
+
+        return array_merge((array)$images,(array)$codes,(array)$feed);
     }
 
     public function getPositionNotAds($position=0){

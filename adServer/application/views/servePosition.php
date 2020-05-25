@@ -12,7 +12,7 @@
 		</noscript>
 		<script>var id=<?=$id?>;</script>
 	</head>
-	<body>
+	<body style="text-align:center">
 		<div id="ad-container">
 		</div>
 		<script type="text/javascript" src="/assets/scripts/loader.js"></script>
