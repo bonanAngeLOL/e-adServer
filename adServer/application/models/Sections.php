@@ -12,4 +12,19 @@ class Sections extends CI_Model{
 		return $this->db->get()->result();
     }
 
+	public function getTemplate($id){
+		$this->db->select("file");
+		$this->db->from("sections");
+		$this->db->where("id_section",$id);
+		return $this->db->get()->result();
+    }
+
+    public function attach($attachData){
+    	$this->db->insert("positioninsection",$attachData);
+    	$return = $this->db->error()["message"];
+		if($this->db->insert_id()>0)
+			$return = $this->db->insert_id();
+		return $return;
+    }
+
 }

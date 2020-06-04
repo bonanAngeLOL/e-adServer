@@ -59,6 +59,7 @@ $route['position/notResource/(:num)'] = 'position/notResource/$1';
 $route['sections/inWebsite/(:num)'] = 'sections/inWebsite/$1';
 $route['positionsManagement/inSection/(:num)'] = 'positionsManagement/inSection/$1';
 $route['positionsManagement/archive/(:num)'] = 'positionsManagement/archive/$1';
+$route['sections/attach/(:num)'] = 'positionsManagement/archive/$1/$2';
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
