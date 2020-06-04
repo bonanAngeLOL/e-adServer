@@ -32,7 +32,7 @@ class Positions extends CI_Model{
 
     public function getFeedImages($id){
         $this->db->select("src, alt, url, width, height");
-        $this->db->from("feedimg");
+        $this->db->from("feedImg");
         $this->db->where("feed",$id);
         return $this->db->get()->result();
     }
