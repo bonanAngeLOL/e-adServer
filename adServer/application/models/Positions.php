@@ -31,7 +31,7 @@ class Positions extends CI_Model{
     }
 
     public function getFeedImages($id){
-        $this->db->select("src, alt, url, width, height");
+        $this->db->select("id_fi as id, src, alt, url, width, height");
         $this->db->from("feedImg");
         $this->db->where("feed",$id);
         return $this->db->get()->result();
@@ -115,7 +115,30 @@ class Positions extends CI_Model{
             )
         ");
         $codes = $this->db->get()->result();
-        return array_merge((array)$images,(array)$codes);
+
+
+        $this->db->select("'feed' as type, a.id_ad as id, f.direction, a.startDate, a.endDate, a.height, a.width, a.active, a.name, f.id_feed as feed");
+        $this->db->from("feed f");
+        $this->db->join("ads a","f.ad = a.id_ad");
+        $this->db->join("adsinposition ap","a.id_ad = ap.ad");
+        $this->db->where("ap.position",$position);
+        $this->db->where("
+            ( 
+                ( 
+                    a.active = 0 && ( a.endDate > current_timestamp() OR a.endDate is null ) 
+                )               OR 
+                a.startDate > current_timestamp()
+            )
+        ");
+        $feed = $this->db->get()->result();
+
+        foreach($feed as $k=>$val){
+            //var_dump($val);
+            $feed[$k]->{"imageList"} = $this->getFeedImages($val->feed);
+            //echo '<br><br>';
+        }
+
+        return array_merge((array)$images,(array)$codes,(array)$feed);
     }
 
     public function getPositionArchive($position=0){
@@ -133,7 +156,22 @@ class Positions extends CI_Model{
         $this->db->where("ap.position",$position);
         $this->db->where("a.endDate < current_timestamp()");
         $codes = $this->db->get()->result();
-        return array_merge((array)$images,(array)$codes);
+
+        $this->db->select("'feed' as type, a.id_ad as id, f.direction, a.startDate, a.endDate, a.height, a.width, a.active, a.name, f.id_feed as feed");
+        $this->db->from("feed f");
+        $this->db->join("ads a","f.ad = a.id_ad");
+        $this->db->join("adsinposition ap","a.id_ad = ap.ad");
+        $this->db->where("ap.position",$position);
+        $this->db->where("a.endDate < current_timestamp()");
+        $feed = $this->db->get()->result();
+
+        foreach($feed as $k=>$val){
+            //var_dump($val);
+            $feed[$k]->{"imageList"} = $this->getFeedImages($val->feed);
+            //echo '<br><br>';
+        }
+
+        return array_merge((array)$images,(array)$codes,(array)$feed);
     }
 
     public function listPerSection($section){

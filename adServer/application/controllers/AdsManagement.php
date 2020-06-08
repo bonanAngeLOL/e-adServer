@@ -41,6 +41,38 @@ class AdsManagement extends CI_Controller{
         return true;
     }
 
+    public function feedInfo($id){
+        if($this->input->method()!="get"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $ad = '{}';
+        $ad = $this->ads->feedInfo($id)[0];
+        echo json_encode( (Object) $ad );
+        return true;
+    }
+
+    public function feedimg($id){
+        if($this->input->method()!="get"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        if(!is_numeric($id) || !isset($id)){
+            echo json_encode(array("error"=>"Valid ID is required ".is_int($id)));
+            $this->output->set_status_header(400);
+            return false;
+        }
+        $ad = '{}';
+        $ad = $this->ads->getFeedImage($id)[0];
+        echo json_encode( (Object) $ad );
+        return true;
+    }
+
 	public function addCode(){
     	if($this->input->method()!="post"){
     		$this->output->set_status_header(405);
@@ -285,6 +317,111 @@ class AdsManagement extends CI_Controller{
         $code['code'] = $this->input->post("code");
 
         $updated = $this->ads->updateCode($ad,$code,$this->input->post("id"));
+
+        $parent = $this->getParentPos($this->input->post("id"));
+        $this->resetPMem($parent);
+        echo json_encode((Object)$updated);
+        return true;
+
+    }
+
+/*update Feed info*/
+
+
+    public function updateFeed(){
+        if($this->input->method()!="post"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+
+        $this->form_validation->set_rules('id','ID','trim|required');
+        $this->form_validation->set_rules('name', 'Name', 'trim|required');
+        $this->form_validation->set_rules('startDate', 'Start date', 'trim|required');
+        $this->form_validation->set_rules('endDate', 'End date', 'trim');
+        $this->form_validation->set_rules('active', 'active', 'trim');
+        $this->form_validation->set_rules('direction', 'direction', 'trim');
+
+        if(!$this->form_validation->run()){
+            echo json_encode($this->form_validation->error_array());
+            $this->output->set_status_header(400);
+            return false;
+        }
+
+        $ad = [
+            "name"      => $this->input->post("name"),
+            "startDate" => $this->input->post("startDate")
+            //"endDate" => $this->input->post("endDate") ?? null
+        ];
+
+        $endDate = $this->input->post("endDate");
+        $active = $this->input->post("active");
+        $ad["endDate"] = $endDate == 'null' || $endDate == '0000-00-00T00:00:00' || $endDate == '' || $endDate == 'undefined' ? null : $endDate;
+        $ad["active"] = $active == 1 || $active == '1' ? 1 : 0;
+
+        $feed['direction'] = $this->input->post("direction");
+
+        $updated = $this->ads->updateFeed($ad,$feed,$this->input->post("id"));
+
+        $parent = $this->getParentPos($this->input->post("id"));
+        $this->resetPMem($parent);
+        echo json_encode((Object)$updated);
+        return true;
+
+    }
+
+    public function updateFeedImg(){
+        if($this->input->method()!="post"){
+            $this->output->set_status_header(405);
+            return false;
+        }
+        $imgSrc = false;
+        if(count($_FILES)>0){
+            $config['upload_path']          = './images/';
+            $config['allowed_types']        = 'gif|jpg|png|jpeg';
+            $config['max_size']             = 2048;
+            $config['max_width']            = 10000;
+            $config['max_height']           = 10000;
+
+            $this->load->library('upload', $config);
+
+            if ( ! $this->upload->do_upload('src'))
+            {
+                echo json_encode(array('error' => $this->upload->display_errors()));
+                $this->output->set_status_header(400);
+                return false;
+            }
+            $imgSrc = $this->upload->data("file_name");
+        }
+        $this->form_validation->set_rules('id','ID','trim|required');
+        $this->form_validation->set_rules('link','Link','trim');
+        $this->form_validation->set_rules('alt', 'alt', 'trim');
+        $this->form_validation->set_rules('width', 'width', 'trim');
+        $this->form_validation->set_rules('height', 'height', 'trim');
+
+        if(!$this->form_validation->run()){
+            echo json_encode($this->form_validation->error_array());
+            $this->output->set_status_header(400);
+            return false;
+        }
+
+        $feedImg = [];
+
+        $height = $this->input->post("height");
+        $width = $this->input->post("width");
+        $alt = $this->input->post("alt");
+        $link = $this->input->post("link");
+
+        $feedImg["height"] = $height == '' || $height == 'null' || $height == 'undefined' ? null : $height;
+        $feedImg["width"] = $width == '' || $width == 'null' || $width == 'undefined' ? null : $width;
+        $feedImg["alt"] = $alt == '' || $alt == 'null' || $alt == 'undefined' ? null : $alt;
+        if($imgSrc){
+            $feedImg["src"] = $imgSrc;
+        }
+        $feedImg["url"] = $link == '' || $link == 'null' || $link == 'undefined' ? null : $link;
+
+//!!!!!!!!!!!!!!
+
+        $updated = $this->ads->updateFeedImage($feedImg,$this->input->post("id"));
 
         $parent = $this->getParentPos($this->input->post("id"));
         $this->resetPMem($parent);

@@ -47,6 +47,17 @@ class Ads extends CI_Model{
 		return $r;
 	}
 
+	public function updateFeed($adInfo, $feed, $id){
+		$r = ['ad'=>'','code'=>''];
+		$this->db->where('id_ad',$id);
+		$r["ad"] = $this->db->update('ads',$adInfo);
+		if(count($feed)){
+			$this->db->where('ad',$id);
+			$r["code"] = $this->db->update('feed',$feed);
+		}
+		return $r;
+	}
+
 	public function updateImage($adInfo, $imageInfo, $id){
 		$r = ['ad'=>'','image'=>''];
 		$this->db->where('id_ad',$id);
@@ -57,6 +68,19 @@ class Ads extends CI_Model{
 		}
 		return $r;
 	}
+
+
+	public function updateFeedImage($feedImg, $id){
+		$r = false;
+		$this->db->where('id_fi',$id);
+		$r = $this->db->update('feedImg',$feedImg);
+		$return = $this->db->error()["message"];
+		if($return != ""){
+			return $return;
+		}
+		return $r;
+	}
+
 
 	public function imgInfo($id){
 		$this->db->select("a.name, a.startDate, a.endDate, a.active, a.height, a.width,
@@ -71,6 +95,14 @@ class Ads extends CI_Model{
 		$this->db->select("a.id_ad as ad, a.name, a.startDate, a.endDate, a.active, a.height, a.width, c.code");
 		$this->db->from("ads a");
 		$this->db->join("code c","a.id_ad = c.ad");
+		$this->db->where("a.id_ad", $id);
+		return $this->db->get()->result();
+	} 
+
+	public function feedInfo($id){
+		$this->db->select("a.id_ad as ad, a.name, a.startDate, a.endDate, a.active, a.height, a.width, f.direction");
+		$this->db->from("ads a");
+		$this->db->join("feed f","a.id_ad = f.ad");
 		$this->db->where("a.id_ad", $id);
 		return $this->db->get()->result();
 	} 
@@ -95,4 +127,12 @@ class Ads extends CI_Model{
 		$data["id"] = $this->db->insert_id();
 		return $data;
 	}
+
+    public function getFeedImage($id){
+        $this->db->select("id_fi as id, src, alt, url, width, height");
+        $this->db->from("feedImg");
+        $this->db->where("id_fi",$id);
+        return $this->db->get()->result();
+    }
+
 }
